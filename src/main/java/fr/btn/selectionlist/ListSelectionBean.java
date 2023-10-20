@@ -17,6 +17,7 @@ public class ListSelectionBean<T> {
         selectedItems = FXCollections.observableArrayList();
         filteredAll = new FilteredList<>(allItems);
         filteredSelected = new FilteredList<>(selectedItems);
+
     }
 
     public void setLists(List<T> allItems, List<T> selectedItems) {
@@ -28,8 +29,8 @@ public class ListSelectionBean<T> {
     }
 
     public void filter(String searchStr) {
-        filteredAll.setPredicate(currentItem -> currentItem.toString().contains(searchStr));
-        filteredSelected.setPredicate(currentItem -> currentItem.toString().contains(searchStr));
+        filteredAll.setPredicate(currentItem -> currentItem.toString().toLowerCase().contains(searchStr.toLowerCase()));
+        filteredSelected.setPredicate(currentItem -> currentItem.toString().toLowerCase().contains(searchStr.toLowerCase()));
     }
 
     public void addItem(T item) {
@@ -51,8 +52,8 @@ public class ListSelectionBean<T> {
         selectedItems.removeAll(allItems);
     }
     public void add(ObservableList<T> list) {
-        allItems.removeAll(list);
         selectedItems.addAll(list);
+        allItems.removeAll(list);
     }
     public void remove(ObservableList<T> list) {
         allItems.addAll(list);
@@ -67,4 +68,11 @@ public class ListSelectionBean<T> {
         return this.selectedItems;
     }
 
+    public FilteredList<T> getFilteredAll() {
+        return filteredAll;
+    }
+
+    public FilteredList<T> getFilteredSelected() {
+        return filteredSelected;
+    }
 }

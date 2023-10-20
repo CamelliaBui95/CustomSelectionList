@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" type="BorderPane" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <GridPane BorderPane.alignment="CENTER">
@@ -51,7 +50,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="selectOne" mnemonicParsing="false" prefHeight="44.0" prefWidth="56.0" text="&gt;" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+            <Button fx:id="selectOne" mnemonicParsing="false" onAction="#addItems" prefHeight="44.0" prefWidth="56.0" text="&gt;" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -59,7 +58,7 @@
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button fx:id="selectTwo" mnemonicParsing="false" text="&gt;&gt;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
+            <Button fx:id="selectTwo" mnemonicParsing="false" onAction="#addAll" text="&gt;&gt;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                <font>
                   <Font size="20.0" />
                </font>
@@ -67,12 +66,12 @@
                   <Insets top="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="unSelectOne" mnemonicParsing="false" prefHeight="44.0" prefWidth="56.0" text="&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+            <Button fx:id="unSelectOne" mnemonicParsing="false" onAction="#removeItems" prefHeight="44.0" prefWidth="56.0" text="&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button fx:id="unSelectTwo" mnemonicParsing="false" prefHeight="44.0" prefWidth="56.0" text="&lt;&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP">
+            <Button fx:id="unSelectTwo" mnemonicParsing="false" onAction="#removeAll" prefHeight="44.0" prefWidth="56.0" text="&lt;&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP">
                <font>
                   <Font size="20.0" />
                </font>
@@ -84,9 +83,9 @@
       </GridPane>
    </center>
    <right>
-      <ListView fx:id="selectedItems" BorderPane.alignment="CENTER" />
+      <ListView fx:id="selectedItemsView" BorderPane.alignment="CENTER" />
    </right>
    <left>
-      <ListView fx:id="allItems" BorderPane.alignment="CENTER" />
+      <ListView fx:id="allItemsView" BorderPane.alignment="CENTER" />
    </left>
 </fx:root>
