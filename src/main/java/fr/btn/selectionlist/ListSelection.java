@@ -1,16 +1,14 @@
 package fr.btn.selectionlist;
 
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
@@ -67,16 +65,6 @@ public class ListSelection<T> extends BorderPane {
         selectedItemsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
-    private void addItem() {
-        T item = this.allItemsView.getSelectionModel().getSelectedItem();
-        bean.addItem(item);
-    }
-
-    private void removeItem() {
-        T item = this.selectedItemsView.getSelectionModel().getSelectedItem();
-        bean.removeItem(item);
-    }
-
     @FXML
     private void addItems() {
         ObservableList<T> items = this.allItemsView.getSelectionModel().getSelectedItems();
@@ -114,64 +102,63 @@ public class ListSelection<T> extends BorderPane {
                 removeAll();
         });
     }
-
     private void setDragStart() {
-        allItemsView.setOnDragDetected(dragEvent -> {
-            Dragboard dragboard = allItemsView.startDragAndDrop(TransferMode.MOVE);
-            ClipboardContent content = new ClipboardContent();
-            content.putString("Select");
-            dragboard.setContent(content);
-            dragEvent.consume();
-        });
+        allItemsView.setOnDragDetected(dragEvent -> startDragEventHandler(dragEvent, allItemsView, "Select"));
 
-        selectedItemsView.setOnDragDetected(dragEvent -> {
-            Dragboard dragboard = selectedItemsView.startDragAndDrop(TransferMode.MOVE);
-            ClipboardContent content = new ClipboardContent();
-            content.putString("UnSelect");
-            dragboard.setContent(content);
-            dragEvent.consume();
-        });
-
+        selectedItemsView.setOnDragDetected(dragEvent -> startDragEventHandler(dragEvent, selectedItemsView, "UnSelect"));
+    }
+    private void startDragEventHandler(MouseEvent e, ListView<T> list, String strContent) {
+        Dragboard dragboard = list.startDragAndDrop(TransferMode.MOVE);
+        ClipboardContent content = new ClipboardContent();
+        content.putString(strContent);
+        dragboard.setContent(content);
+        e.consume();
     }
     private void setDragOver() {
         allItemsView.setOnDragOver(e -> {
-            if (e.getGestureSource() == selectedItemsView)
+            if (isFrom(e, selectedItemsView, 1, Integer.MAX_VALUE))
                 e.acceptTransferModes(TransferMode.ANY);
             e.consume();
         });
 
         selectedItemsView.setOnDragOver(e -> {
-            if (e.getGestureSource() == allItemsView)
+            if (isFrom(e, allItemsView, 1, Integer.MAX_VALUE))
                 e.acceptTransferModes(TransferMode.ANY);
             e.consume();
         });
 
         searchField.setOnDragOver(e -> {
-            if(e.getGestureSource() == allItemsView && allItemsView.getSelectionModel().getSelectedItems().size() == 1
-                    || e.getGestureSource() == selectedItemsView && selectedItemsView.getSelectionModel().getSelectedItems().size() == 1)
+            if(isFrom(e, allItemsView, 1, 2)
+                    || isFrom(e, selectedItemsView, 1, 2))
                 e.acceptTransferModes(TransferMode.ANY);
 
             e.consume();
         });
     }
 
+    private boolean isFrom(DragEvent e, ListView<T> list, int minSize, int maxSize) {
+        boolean case1 = e.getGestureSource() == list;
+        boolean case2 = list.getSelectionModel().getSelectedItems().size() >= minSize && list.getSelectionModel().getSelectedItems().size() < maxSize;
+        return case1 && case2;
+    }
+
     private void setDragAndDrop() {
         allItemsView.setOnDragDropped(e -> {
-            if(e.getGestureSource() == selectedItemsView)
+            if(isFrom(e, selectedItemsView, 1, Integer.MAX_VALUE))
                 removeItems();
             e.consume();
         });
 
         selectedItemsView.setOnDragDropped(e -> {
-            if(e.getGestureSource() == allItemsView)
+            if(isFrom(e, allItemsView, 1, Integer.MAX_VALUE))
                 addItems();
             e.consume();
         });
 
         searchField.setOnDragDropped(e -> {
-            if(e.getGestureSource() == allItemsView)
+            if(isFrom(e, allItemsView, 1, 2))
                 searchField.textProperty().set(allItemsView.getSelectionModel().getSelectedItem().toString());
-            else if(e.getGestureSource() == selectedItemsView)
+            else if(isFrom(e, selectedItemsView, 1 ,2))
                 searchField.textProperty().set(selectedItemsView.getSelectionModel().getSelectedItem().toString());
             e.consume();
         });
